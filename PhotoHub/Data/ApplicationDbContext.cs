@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PhotoHub.Models;
+using PhotoHub.Models.DBObjects;
 
 namespace ProgrammingClub.Data;
 
@@ -14,16 +14,16 @@ public partial class ApplicationDbContext : DbContext
     {
     }
 
-    public DbSet<UserModel> Users { get; set; }
-    public DbSet<BlogPostModel> BlogPosts { get; set; }
-    public DbSet<ImageModel> Images { get; set; }
-    public DbSet<CommentModel> Comments { get; set; }
+    public DbSet<User> Users { get; set; }
+    public DbSet<BlogPost> BlogPosts { get; set; }
+    public DbSet<Image> Images { get; set; }
+    public DbSet<Comment> Comments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<UserModel>(entity =>
+        modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.IdUser);
 
@@ -37,7 +37,7 @@ public partial class ApplicationDbContext : DbContext
             entity.HasIndex(e => e.Email).IsUnique();
         });
 
-        modelBuilder.Entity<BlogPostModel>(entity =>
+        modelBuilder.Entity<BlogPost>(entity =>
         {
             entity.HasKey(e => e.IdBlogPost);
 
@@ -55,7 +55,7 @@ public partial class ApplicationDbContext : DbContext
                 .OnDelete(DeleteBehavior.Restrict);
         });
 
-        modelBuilder.Entity<ImageModel>(entity =>
+        modelBuilder.Entity<Image>(entity =>
         {
             entity.HasKey(e => e.IdImage);
 
@@ -66,7 +66,7 @@ public partial class ApplicationDbContext : DbContext
                 .OnDelete(DeleteBehavior.SetNull);
         });
 
-        modelBuilder.Entity<CommentModel>(entity =>
+        modelBuilder.Entity<Comment>(entity =>
         {
             entity.HasKey(e => e.IdComment);
 
