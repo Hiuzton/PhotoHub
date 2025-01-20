@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using PhotoHub.Models;
 
 namespace ProgrammingClub.Data;
 
@@ -13,117 +12,77 @@ public partial class ApplicationDbContext : DbContext
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
-    }/*
+    }
 
-    public virtual DbSet<Announcement> Announcements { get; set; }
-
-    public virtual DbSet<CodeSnippet> CodeSnippets { get; set; }
-
-    public virtual DbSet<Member> Members { get; set; }
-
-    public virtual DbSet<Membership> Memberships { get; set; }
-
-    public virtual DbSet<MembershipType> MembershipTypes { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Name=ConnectionStrings");
+    public DbSet<UserModel> Users { get; set; }
+    public DbSet<BlogPostModel> BlogPosts { get; set; }
+    public DbSet<ImageModel> Images { get; set; }
+    public DbSet<CommentModel> Comments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Announcement>(entity =>
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<UserModel>(entity =>
         {
-            entity.HasKey(e => e.IdAnnouncement).HasName("PK__Announce__4FBADEC1C323E3A1");
+            entity.HasKey(e => e.IdUser);
 
-            entity.Property(e => e.IdAnnouncement).ValueGeneratedNever();
-            entity.Property(e => e.EventDateTime).HasColumnType("datetime");
-            entity.Property(e => e.Tags)
-                .HasMaxLength(1000)
+            entity.Property(e => e.IdUser).ValueGeneratedOnAdd();
+            entity.Property(e => e.Username)
+                .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.Text)
-                .HasMaxLength(1000)
-                .IsUnicode(false);
-            entity.Property(e => e.Title)
-                .HasMaxLength(250)
-                .IsUnicode(false);
-            entity.Property(e => e.ValidFrom).HasColumnType("datetime");
-            entity.Property(e => e.ValidTo).HasColumnType("datetime");
-        });
-
-        modelBuilder.Entity<CodeSnippet>(entity =>
-        {
-            entity.HasKey(e => e.IdCodeSnippet).HasName("PK__CodeSnip__BAE679EBEC2E9D52");
-
-            entity.Property(e => e.IdCodeSnippet).ValueGeneratedNever();
-            entity.Property(e => e.ContentCode).IsUnicode(false);
-            entity.Property(e => e.DateTimeAdded).HasColumnType("datetime");
-            entity.Property(e => e.Title)
+            entity.Property(e => e.Email)
                 .HasMaxLength(100)
                 .IsUnicode(false);
-
-            entity.HasOne(d => d.IdMemberNavigation).WithMany(p => p.CodeSnippets)
-                .HasForeignKey(d => d.IdMember)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_CodeSnippets_Members");
-
-            entity.HasOne(d => d.IdSnippetPreviousVersionNavigation).WithMany(p => p.InverseIdSnippetPreviousVersionNavigation)
-                .HasForeignKey(d => d.IdSnippetPreviousVersion)
-                .HasConstraintName("FK_CodeSnippets_CodeSnippets");
+            entity.HasIndex(e => e.Email).IsUnique();
         });
 
-        modelBuilder.Entity<Member>(entity =>
+        modelBuilder.Entity<BlogPostModel>(entity =>
         {
-            entity.HasKey(e => e.IdMember).HasName("PK__Members__570E7FF05D6626F7");
+            entity.HasKey(e => e.IdBlogPost);
 
-            entity.Property(e => e.IdMember).ValueGeneratedNever();
-            entity.Property(e => e.Description)
+            entity.Property(e => e.IdBlogPost).ValueGeneratedOnAdd();
+            entity.Property(e => e.Title)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Content)
                 .HasMaxLength(1000)
                 .IsUnicode(false);
-            entity.Property(e => e.Name)
-                .HasMaxLength(250)
-                .IsUnicode(false);
-            entity.Property(e => e.Position)
-                .HasMaxLength(250)
-                .IsUnicode(false);
-            entity.Property(e => e.Resume).IsUnicode(false);
-            entity.Property(e => e.Title)
-                .HasMaxLength(100)
-                .IsUnicode(false);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.HasOne(e => e.Author)
+                .WithMany()
+                .HasForeignKey(e => e.AuthorId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
-        modelBuilder.Entity<Membership>(entity =>
+        modelBuilder.Entity<ImageModel>(entity =>
         {
-            entity.HasKey(e => e.IdMembership).HasName("PK__Membersh__9F4153303416AF87");
+            entity.HasKey(e => e.IdImage);
 
-            entity.Property(e => e.IdMembership).ValueGeneratedNever();
-            entity.Property(e => e.EndDate).HasColumnType("datetime");
-            entity.Property(e => e.StartDate).HasColumnType("datetime");
-
-            entity.HasOne(d => d.IdMemberNavigation).WithMany(p => p.Memberships)
-                .HasForeignKey(d => d.IdMember)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Memberships_Members");
-
-            entity.HasOne(d => d.IdMembershipTypeNavigation).WithMany(p => p.Memberships)
-                .HasForeignKey(d => d.IdMembershipType)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Memberships_MembershipTypes");
+            entity.Property(e => e.IdImage).ValueGeneratedOnAdd();
+            entity.HasOne(e => e.BlogPost)
+                .WithMany()
+                .HasForeignKey(e => e.IdBlogPost)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
-        modelBuilder.Entity<MembershipType>(entity =>
+        modelBuilder.Entity<CommentModel>(entity =>
         {
-            entity.HasKey(e => e.IdMembershipType).HasName("PK__Membersh__64F6DC3AFFC1FBCF");
+            entity.HasKey(e => e.IdComment);
 
-            entity.Property(e => e.IdMembershipType).ValueGeneratedNever();
-            entity.Property(e => e.Description)
-                .HasMaxLength(250)
+            entity.Property(e => e.IdComment).ValueGeneratedOnAdd();
+            entity.Property(e => e.Content)
+                .HasMaxLength(500) 
                 .IsUnicode(false);
-            entity.Property(e => e.Name)
-                .HasMaxLength(100)
-                .IsUnicode(false);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.HasOne(e => e.BlogPost)
+                .WithMany()
+                .HasForeignKey(e => e.IdBlogPost)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.IdUser)
+                .OnDelete(DeleteBehavior.Restrict); 
         });
-
-        OnModelCreatingPartial(modelBuilder);
     }
-
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);*/
 }
