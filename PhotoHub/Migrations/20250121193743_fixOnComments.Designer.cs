@@ -5,27 +5,27 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ProgrammingClub.Data;
+using PhotoHub.Data;
 
 #nullable disable
 
 namespace PhotoHub.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250120191504_firstUpload")]
-    partial class firstUpload
+    [Migration("20250121193743_fixOnComments")]
+    partial class fixOnComments
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.1")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("PhotoHub.Models.BlogPostModel", b =>
+            modelBuilder.Entity("PhotoHub.Models.DBObjects.BlogPost", b =>
                 {
                     b.Property<Guid>("IdBlogPost")
                         .ValueGeneratedOnAdd()
@@ -56,7 +56,7 @@ namespace PhotoHub.Migrations
                     b.ToTable("BlogPosts");
                 });
 
-            modelBuilder.Entity("PhotoHub.Models.CommentModel", b =>
+            modelBuilder.Entity("PhotoHub.Models.DBObjects.Comment", b =>
                 {
                     b.Property<Guid>("IdComment")
                         .ValueGeneratedOnAdd()
@@ -86,7 +86,7 @@ namespace PhotoHub.Migrations
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("PhotoHub.Models.ImageModel", b =>
+            modelBuilder.Entity("PhotoHub.Models.DBObjects.Image", b =>
                 {
                     b.Property<Guid>("IdImage")
                         .ValueGeneratedOnAdd()
@@ -106,7 +106,7 @@ namespace PhotoHub.Migrations
                     b.ToTable("Images");
                 });
 
-            modelBuilder.Entity("PhotoHub.Models.UserModel", b =>
+            modelBuilder.Entity("PhotoHub.Models.DBObjects.User", b =>
                 {
                     b.Property<Guid>("IdUser")
                         .ValueGeneratedOnAdd()
@@ -124,8 +124,7 @@ namespace PhotoHub.Migrations
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -141,26 +140,26 @@ namespace PhotoHub.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("PhotoHub.Models.BlogPostModel", b =>
+            modelBuilder.Entity("PhotoHub.Models.DBObjects.BlogPost", b =>
                 {
-                    b.HasOne("PhotoHub.Models.UserModel", "Author")
+                    b.HasOne("PhotoHub.Models.DBObjects.User", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("PhotoHub.Models.CommentModel", b =>
+            modelBuilder.Entity("PhotoHub.Models.DBObjects.Comment", b =>
                 {
-                    b.HasOne("PhotoHub.Models.BlogPostModel", "BlogPost")
+                    b.HasOne("PhotoHub.Models.DBObjects.BlogPost", "BlogPost")
                         .WithMany()
                         .HasForeignKey("IdBlogPost")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PhotoHub.Models.UserModel", "User")
+                    b.HasOne("PhotoHub.Models.DBObjects.User", "User")
                         .WithMany()
                         .HasForeignKey("IdUser")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -171,12 +170,12 @@ namespace PhotoHub.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("PhotoHub.Models.ImageModel", b =>
+            modelBuilder.Entity("PhotoHub.Models.DBObjects.Image", b =>
                 {
-                    b.HasOne("PhotoHub.Models.BlogPostModel", "BlogPost")
+                    b.HasOne("PhotoHub.Models.DBObjects.BlogPost", "BlogPost")
                         .WithMany()
                         .HasForeignKey("IdBlogPost")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("BlogPost");
                 });

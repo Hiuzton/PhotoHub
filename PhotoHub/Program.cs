@@ -1,10 +1,13 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using PhotoHub.Data;
+using PhotoHub.Infrastructure;
+using PhotoHub.Infrastructure.Interfaces;
 using PhotoHub.Repositories;
 using PhotoHub.Repositories.Interfaces;
 using PhotoHub.Service;
 using PhotoHub.Services;
 using PhotoHub.Services.Interfaces;
-using ProgrammingClub.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +30,15 @@ builder.Services.AddScoped<IBlogPostService, BlogPostService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/user/login"; // Redirect to Login if not authenticated
+        options.LogoutPath = "/user/logout"; // Redirect after logout
+    });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -42,6 +54,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

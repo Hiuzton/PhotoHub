@@ -45,7 +45,6 @@ namespace PhotoHub.Service
                 Title = dbBlogPost.Title,
                 Content = dbBlogPost.Content,
                 AuthorId = dbBlogPost.AuthorId,
-                Author = dbBlogPost.Author,
             };
         }
 
@@ -56,8 +55,7 @@ namespace PhotoHub.Service
                 IdBlogPost = blogPostModel.IdBlogPost,
                 Title = blogPostModel.Title,
                 Content = blogPostModel.Content,
-                AuthorId = blogPostModel.AuthorId,
-                Author = blogPostModel.Author,
+                AuthorId = blogPostModel.AuthorId
             };
         }
     }

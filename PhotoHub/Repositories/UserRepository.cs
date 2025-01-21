@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PhotoHub.Data;
 using PhotoHub.Models.DBObjects;
 using PhotoHub.Repositories.Interfaces;
-using ProgrammingClub.Data;
 
 namespace PhotoHub.Repositories
 {
@@ -17,6 +17,11 @@ namespace PhotoHub.Repositories
         public async Task<User> GetByIdAsync(Guid id)
         {
             return await _context.Users.FindAsync(id);
+        }
+
+        public async Task<User> GetByEmail(string email)
+        {
+            return await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email);
         }
 
         public async Task<IEnumerable<User>> GetAllAsync()

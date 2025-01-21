@@ -39,7 +39,6 @@ namespace PhotoHub.Services
                 IdImage = dbImage.IdImage,
                 Url = dbImage.Url,
                 IdBlogPost = dbImage.IdBlogPost,
-                BlogPost = dbImage.BlogPost,
             };
         }
 
@@ -50,7 +49,6 @@ namespace PhotoHub.Services
                 IdImage = imageModel.IdImage,
                 Url = imageModel.Url,
                 IdBlogPost = imageModel.IdBlogPost,
-                BlogPost = imageModel.BlogPost,
             };
         }
     }

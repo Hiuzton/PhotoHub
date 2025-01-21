@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PhotoHub.Migrations
 {
     /// <inheritdoc />
-    public partial class firstUpload : Migration
+    public partial class fixOnComments : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,7 +19,7 @@ namespace PhotoHub.Migrations
                     Username = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     Email = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -44,7 +44,7 @@ namespace PhotoHub.Migrations
                         column: x => x.AuthorId,
                         principalTable: "Users",
                         principalColumn: "IdUser",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -90,7 +90,7 @@ namespace PhotoHub.Migrations
                         column: x => x.IdBlogPost,
                         principalTable: "BlogPosts",
                         principalColumn: "IdBlogPost",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(

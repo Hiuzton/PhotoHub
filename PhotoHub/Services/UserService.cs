@@ -1,4 +1,6 @@
-﻿using PhotoHub.Models;
+﻿using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using PhotoHub.Infrastructure.Interfaces;
+using PhotoHub.Models;
 using PhotoHub.Models.DBObjects;
 using PhotoHub.Repositories.Interfaces;
 using PhotoHub.Services.Interfaces;
@@ -7,11 +9,14 @@ namespace PhotoHub.Services
 {
     public class UserService : IUserService
     {
+
+        private readonly IPasswordHasher _passwordHasher;
         private readonly IUserRepository _userRepository;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IPasswordHasher passwordHasher)
         {
             _userRepository = userRepository;
+            _passwordHasher = passwordHasher;
         }
 
         public async Task<UserModel> GetUserByIdAsync(Guid id)
@@ -26,10 +31,17 @@ namespace PhotoHub.Services
             return dbUsers.Select(MapToBusinessModel);
         }
 
-        public async Task CreateUserAsync(UserModel user)
+        public async Task Register(UserModel user)
         {
+            user.PasswordHash = _passwordHasher.Generate(user.PasswordHash);
             var dbUser = MapToDbModel(user);
             await _userRepository.AddAsync(dbUser);
+        }
+
+        public async Task<bool> Login(string email, string password)
+        {
+            var user = await _userRepository.GetByEmail(email);
+            return _passwordHasher.Verify(password, user.PasswordHash);
         }
 
         public async Task UpdateUserAsync(UserModel user)
@@ -49,6 +61,7 @@ namespace PhotoHub.Services
             {
                 IdUser = dbUser.IdUser,
                 Username = dbUser.Username,
+                PasswordHash = dbUser.PasswordHash,
                 Email = dbUser.Email,
                 Role = dbUser.Role,
             };
@@ -61,7 +74,7 @@ namespace PhotoHub.Services
                 IdUser = user.IdUser,
                 Username = user.Username,
                 Email = user.Email,
-                PasswordHash = "",
+                PasswordHash = user.PasswordHash,
                 Role = user.Role
             };
         }

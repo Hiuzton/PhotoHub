@@ -44,10 +44,8 @@ namespace PhotoHub.Services
                 IdComment = dbCommment.IdComment,
                 Content = dbCommment.Content,
                 CreatedDate = dbCommment.CreatedDate,
-                BlogPost = dbCommment.BlogPost,
                 IdBlogPost = dbCommment.IdBlogPost,
                 IdUser = dbCommment.IdUser,
-                User = dbCommment.User
             };
         }
 
@@ -58,10 +56,8 @@ namespace PhotoHub.Services
                 IdComment = commentModel.IdComment,
                 Content = commentModel.Content,
                 CreatedDate = commentModel.CreatedDate,
-                BlogPost = commentModel.BlogPost,
                 IdBlogPost = commentModel.IdBlogPost,
                 IdUser = commentModel.IdUser,
-                User = commentModel.User
             };
         }
     }

@@ -4,7 +4,8 @@ namespace PhotoHub.Services.Interfaces
 {
     public interface IUserService
     {
-        Task CreateUserAsync(UserModel user);
+        Task Register(UserModel user);
+        Task<bool> Login(string email, string password);
         Task DeleteUserAsync(Guid id);
         Task<IEnumerable<UserModel>> GetAllUsersAsync();
         Task<UserModel> GetUserByIdAsync(Guid id);

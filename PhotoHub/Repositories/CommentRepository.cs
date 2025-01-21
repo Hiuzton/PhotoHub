@@ -1,6 +1,6 @@
-﻿using PhotoHub.Models.DBObjects;
+﻿using PhotoHub.Data;
+using PhotoHub.Models.DBObjects;
 using PhotoHub.Repositories.Interfaces;
-using ProgrammingClub.Data;
 
 namespace PhotoHub.Repositories
 {
