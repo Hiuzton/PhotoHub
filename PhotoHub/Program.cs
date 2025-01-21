@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PhotoHub.Repositories;
 using PhotoHub.Repositories.Interfaces;
+using PhotoHub.Service;
 using PhotoHub.Services;
 using PhotoHub.Services.Interfaces;
 using ProgrammingClub.Data;
@@ -22,6 +23,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Add scoped services
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IBlogPostService, BlogPostService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 var app = builder.Build();
 

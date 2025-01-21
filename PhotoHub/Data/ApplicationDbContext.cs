@@ -14,10 +14,10 @@ public partial class ApplicationDbContext : DbContext
     {
     }
 
-    public DbSet<User> Users { get; set; }
-    public DbSet<BlogPost> BlogPosts { get; set; }
-    public DbSet<Image> Images { get; set; }
-    public DbSet<Comment> Comments { get; set; }
+    public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<BlogPost> BlogPosts { get; set; }
+    public virtual DbSet<Image> Images { get; set; }
+    public virtual DbSet<Comment> Comments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
