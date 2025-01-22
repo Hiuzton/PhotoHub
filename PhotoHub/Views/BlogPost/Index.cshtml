@@ -1,0 +1,55 @@
+﻿@model IEnumerable<PhotoHub.ViewModels.BlogPostViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="text-center">Latest Posts</h1>
+
+<p class="text-end">
+    <a class="btn btn-primary" asp-action="Create">Create New</a>
+</p>
+
+<div class="container">
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="@item.ImageUrl" class="card-img-top" alt="@item.Title" />
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Title</h5>
+                        <p class="card-text">@item.Content.Substring(0, Math.Min(item.Content.Length, 150))...</p>
+                        <p class="text-muted">
+                            <small>By: @item.AuthorName on @item.CreatedDate.ToString("MMMM dd, yyyy")</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .card {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+    .card-img-top {
+        object-fit: cover;
+        height: 200px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+    .card-title {
+        font-weight: bold;
+    }
+
+    .card-text {
+        height: 60px;
+        overflow: hidden;
+    }
+</style>

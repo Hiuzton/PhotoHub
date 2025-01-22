@@ -8,6 +8,8 @@ using PhotoHub.Repositories.Interfaces;
 using PhotoHub.Service;
 using PhotoHub.Services;
 using PhotoHub.Services.Interfaces;
+using Amazon;
+using Amazon.S3;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +31,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IBlogPostService, BlogPostService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IS3Service, S3Service>();
 
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
@@ -38,6 +41,17 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/user/login"; // Redirect to Login if not authenticated
         options.LogoutPath = "/user/logout"; // Redirect after logout
     });
+
+// Configure AWS S3
+builder.Services.AddSingleton<IAmazonS3>(sp =>
+{
+    var awsOptions = builder.Configuration.GetSection("AWS");
+    var s3Client = new AmazonS3Client(
+        awsOptions["AccessKey"],
+        awsOptions["SecretKey"],
+        RegionEndpoint.GetBySystemName(awsOptions["Region"]));
+    return s3Client;
+});
 
 var app = builder.Build();
 
