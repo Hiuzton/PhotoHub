@@ -71,12 +71,16 @@ namespace PhotoHub.Controllers
             var email = collection["email"];
             var password = collection["passwordhash"];
             var rememberMe = collection["rememberme"].Count > 0;
+            var user = await _userService.GetUserByEmail(email);
 
             if (await _userService.Login(email, password))
             {
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Email, email)
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.Role, user.Role),
+                    new Claim("UserGuid", user.IdUser.ToString())
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

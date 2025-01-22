@@ -10,5 +10,6 @@ namespace PhotoHub.Services.Interfaces
         Task<IEnumerable<UserModel>> GetAllUsersAsync();
         Task<UserModel> GetUserByIdAsync(Guid id);
         Task UpdateUserAsync(UserModel user);
+        Task<UserModel> GetUserByEmail(string email);
     }
 }

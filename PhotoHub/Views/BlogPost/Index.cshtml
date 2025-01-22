@@ -8,15 +8,14 @@
 <h1 class="text-center">Latest Posts</h1>
 
 <p class="text-end">
-    <a class="btn btn-primary" asp-action="Create">Create New</a>
+    <a class="btn btn-primary" asp-action="CreateBlogPost">Create New</a>
 </p>
-
 <div class="container">
-    <div class="row">
+    <div class="row justify-content-center">
         @foreach (var item in Model)
         {
-            <div class="col-md-4 mb-4">
-                <div class="card">
+            <div class="col-md-6 mb-4 d-flex justify-content-center">
+                <div class="card" style="width: 100%;">
                     <img src="@item.ImageUrl" class="card-img-top" alt="@item.Title" />
                     <div class="card-body">
                         <h5 class="card-title">@item.Title</h5>
@@ -31,6 +30,7 @@
     </div>
 </div>
 
+
 <style>
     .card {
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -38,8 +38,7 @@
     }
 
     .card-img-top {
-        object-fit: cover;
-        height: 200px;
+        object-fit: fill;
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
     }
@@ -49,7 +48,7 @@
     }
 
     .card-text {
-        height: 60px;
+        height: 20px;
         overflow: hidden;
     }
 </style>

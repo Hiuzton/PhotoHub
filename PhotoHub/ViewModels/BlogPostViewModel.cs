@@ -1,4 +1,6 @@
-﻿namespace PhotoHub.ViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace PhotoHub.ViewModels
 {
     public class BlogPostViewModel
     {

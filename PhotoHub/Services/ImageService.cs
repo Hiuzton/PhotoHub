@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
 using PhotoHub.Models;
 using PhotoHub.Models.DBObjects;
+using PhotoHub.Repositories;
 using PhotoHub.Repositories.Interfaces;
 using PhotoHub.Services.Interfaces;
 
@@ -21,6 +22,11 @@ namespace PhotoHub.Services
             return dbImage == null ? null : MapToBusinessModel(dbImage);
         }
 
+        public async Task<IEnumerable<ImageModel>> GetAllImages()
+        {
+            var dbUsers = await _imageRepository.GetAllAsync();
+            return dbUsers.Select(MapToBusinessModel);
+        }
         public async Task CreateImage(ImageModel imageModel)
         {
             var dbImage = MapToDbModel(imageModel);

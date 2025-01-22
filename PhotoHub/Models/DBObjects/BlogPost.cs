@@ -1,4 +1,6 @@
-﻿namespace PhotoHub.Models.DBObjects
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace PhotoHub.Models.DBObjects
 {
     public class BlogPost
     {

@@ -44,6 +44,12 @@ namespace PhotoHub.Services
             return _passwordHasher.Verify(password, user.PasswordHash);
         }
 
+        public async Task<UserModel> GetUserByEmail(string email)
+        {
+            var user = await _userRepository.GetByEmail(email);
+            return user == null ? null : MapToBusinessModel(user);
+        }
+
         public async Task UpdateUserAsync(UserModel user)
         {
             var dbUser = MapToDbModel(user);

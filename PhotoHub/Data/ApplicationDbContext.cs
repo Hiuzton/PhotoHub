@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PhotoHub.Models;
 using PhotoHub.Models.DBObjects;
 
 namespace PhotoHub.Data
@@ -43,11 +44,14 @@ namespace PhotoHub.Data
                 entity.Property(e => e.Content)
                     .HasMaxLength(1000)
                     .IsUnicode(false);
-                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+                entity.Property(e => e.CreatedDate)
+                    .HasColumnType("datetime")
+                    .IsRequired();
                 entity.HasOne(e => e.Author)
                     .WithMany()
                     .HasForeignKey(e => e.AuthorId)
                     .OnDelete(DeleteBehavior.Cascade);
+
             });
 
             modelBuilder.Entity<Image>(entity =>

@@ -17,8 +17,8 @@ namespace PhotoHub.Models
         public Guid AuthorId { get; set; }
         public UserModel Author { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
-        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm:ss.fff}")]
+        [DataType(DataType.DateTime)]
         public DateTime CreatedDate { get; set; }
     }
 }

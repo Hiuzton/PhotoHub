@@ -1,4 +1,5 @@
-﻿using PhotoHub.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using PhotoHub.Data;
 using PhotoHub.Models.DBObjects;
 using PhotoHub.Repositories.Interfaces;
 
@@ -22,6 +23,11 @@ namespace PhotoHub.Repositories
         public async Task<Image> GetByIdAsync(Guid id)
         {
             return await _context.Images.FindAsync(id);
+        }
+
+        public async Task<IEnumerable<Image>> GetAllAsync()
+        {
+            return await _context.Images.ToListAsync();
         }
 
         public async Task DeleteAsync(Guid id)
