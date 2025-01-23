@@ -4,6 +4,7 @@ using PhotoHub.Models;
 using PhotoHub.Models.DBObjects;
 using PhotoHub.Repositories.Interfaces;
 using PhotoHub.Services.Interfaces;
+using System.Runtime.InteropServices;
 
 namespace PhotoHub.Services
 {
@@ -18,6 +19,12 @@ namespace PhotoHub.Services
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
         }
+        public async Task<string> GetUserNameById(Guid id)
+        {
+            var dbUser = await _userRepository.GetByIdAsync(id);
+            var user = MapToBusinessModel(dbUser);
+            return user.Username;
+        } 
 
         public async Task<UserModel> GetUserByIdAsync(Guid id)
         {
@@ -84,5 +91,6 @@ namespace PhotoHub.Services
                 Role = user.Role
             };
         }
+
     }
 }

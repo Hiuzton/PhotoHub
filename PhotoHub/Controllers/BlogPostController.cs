@@ -13,34 +13,39 @@ namespace PhotoHub.Controllers
         private readonly IBlogPostService _blogPostService;
         private readonly IImageService _imageService;
         private readonly IS3Service _s3Service;
+        private readonly IUserService _userService;
 
-        public BlogPostController(IBlogPostService blogPostService, IImageService imageService, IS3Service s3Service)
+        public BlogPostController(IBlogPostService blogPostService, IImageService imageService, IS3Service s3Service, IUserService userService)
         {
             _blogPostService = blogPostService;
             _imageService = imageService;
+            _userService = userService;
             _s3Service = s3Service;
         }
         // GET: BlogPostController
         public async Task<IActionResult> Index()
         {
-            // Fetch all blog posts and images
-            var blogPosts = await _blogPostService.GetAllBlogPosts();
-            var images = await _imageService.GetAllImages();
+            var blogPosts = (await _blogPostService.GetAllBlogPosts()).ToList();
+            var images = (await _imageService.GetAllImages()).ToList();
 
-            // Create a list of BlogPostViewModel
-            var blogPostViewModels = blogPosts.Select(bp => new BlogPostViewModel
+            var blogPostViewModels = new List<BlogPostViewModel>();
+
+            foreach (var bp in blogPosts)
             {
-                Title = bp.Title,
-                Content = bp.Content,
-                CreatedDate = bp.CreatedDate,
-                // Find associated image for the blog post (if exists)
-                ImageUrl = images.FirstOrDefault(img => img.IdBlogPost == bp.IdBlogPost)?.Url,
-                AuthorName = bp.Author?.Username // Assuming Author is a UserModel with Username
-            }).ToList();
+                var viewModel = new BlogPostViewModel
+                {
+                    Title = bp.Title,
+                    Content = bp.Content,
+                    CreatedDate = bp.CreatedDate,
+                    ImageUrl = images.FirstOrDefault(img => img.IdBlogPost == bp.IdBlogPost)?.Url,
+                    AuthorName = await _userService.GetUserNameById(bp.AuthorId) // Avoid parallel calls
+                };
+                blogPostViewModels.Add(viewModel);
+            }
 
-            return View(blogPostViewModels);
+            // Order by CreatedDate in descending order
+            return View(blogPostViewModels.OrderByDescending(vm => vm.CreatedDate));
         }
-
 
         // GET: BlogPostController/Details/5
         public ActionResult Details(int id)
@@ -49,6 +54,7 @@ namespace PhotoHub.Controllers
         }
 
         // GET: BlogPostController/Create
+        [Authorize]
         public ActionResult CreateBlogPost()
         {
             return View();

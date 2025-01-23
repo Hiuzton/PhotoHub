@@ -84,7 +84,11 @@ namespace PhotoHub.Controllers
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                var authProperties = new AuthenticationProperties { IsPersistent = rememberMe };
+                var authProperties = new AuthenticationProperties 
+                { 
+                    IsPersistent = rememberMe,
+                    ExpiresUtc = DateTime.UtcNow.AddMinutes(30)
+                };
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 

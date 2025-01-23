@@ -1,0 +1,25 @@
+﻿@model IEnumerable<PhotoHub.Models.ImageModel>
+
+<h1>All Images</h1>
+
+<div class="container">
+    <div class="row gx-1 gy-1">
+        @foreach (var image in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="@image.Url" class="card-img-top" alt="Image @image.IdImage" />
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+
+    .card-img-top {
+        max-height: 300px; 
+        object-fit: contain;
+    }
+</style>
+
