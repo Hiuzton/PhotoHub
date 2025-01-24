@@ -51,11 +51,11 @@ namespace PhotoHub.Controllers
                     await _userService.Register(user);
                     return RedirectToAction("Login");
                 }
-                return RedirectToAction("FailedRequest");
+                return RedirectToAction("Login");
             }
             catch
             {
-                return View("FailedRequest");
+                return View("Login");
             }
         }
 
@@ -96,7 +96,7 @@ namespace PhotoHub.Controllers
             }
 
             ModelState.AddModelError("", "Invalid username or password.");
-            return View("FailedRequest");
+            return View("Login");
         }
 
         public ActionResult Logout()

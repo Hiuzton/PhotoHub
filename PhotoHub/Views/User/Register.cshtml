@@ -29,8 +29,17 @@
 
             <div class="form-group m-1">
                 <label asp-for="PasswordHash" class="control-label">Password</label>
-                <input asp-for="PasswordHash" class="form-control" type="password" />
+                <input asp-for="PasswordHash"
+                       class="form-control"
+                       type="password"
+                       pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@@!%*?&])[A-Za-z\d@@!%*?&]{8,}$"
+                       title="Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character."
+                       required />
                 <span asp-validation-for="PasswordHash" class="text-danger"></span>
+            </div>
+
+            <div id="passwordWarning" class="text-danger" style="display: none;">
+                Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.
             </div>
 
             <div class="form-group m-1">
@@ -43,6 +52,23 @@
 <div>
     <a asp-action="Login">Already have an account</a>
 </div>
+
+
+<script>
+    function validatePassword() {
+        const passwordInput = document.getElementById("passwordInput").value;
+        const warning = document.getElementById("passwordWarning");
+        const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@@!%*?&])[A-Za-z\d@@!%*?&]{8,}$/;
+
+        if (!pattern.test(passwordInput)) {
+            warning.style.display = "block"; // Show warning
+            return false; // Prevent form submission
+        }
+
+        warning.style.display = "none"; // Hide warning
+        return true; // Allow form submission
+    }
+</script>
 
 @section Scripts {
     @{
