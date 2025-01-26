@@ -25,6 +25,11 @@ namespace PhotoHub.Repositories
             return await _context.Images.FindAsync(id);
         }
 
+        public async Task<Image> GetByBlogPostIdAsync(Guid id)
+        {
+            return await _context.Images.FirstOrDefaultAsync(c => c.IdBlogPost == id);
+        }
+
         public async Task<IEnumerable<Image>> GetAllAsync()
         {
             return await _context.Images.ToListAsync();

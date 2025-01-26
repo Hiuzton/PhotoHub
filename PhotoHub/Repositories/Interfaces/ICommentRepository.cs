@@ -8,5 +8,6 @@ namespace PhotoHub.Repositories.Interfaces
         Task DeleteAsync(Guid id);
         Task<Comment> GetByIdAsync(Guid id);
         Task UpdateAsync(Comment comment);
+        Task<List<Comment>> GetCommentsByBlogPostId(Guid blogPostId);
     }
 }

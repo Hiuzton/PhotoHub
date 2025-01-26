@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PhotoHub.Models;
+using PhotoHub.Services;
 using PhotoHub.Services.Interfaces;
 using PhotoHub.ViewModels;
 using System.Runtime.InteropServices;
@@ -14,13 +15,15 @@ namespace PhotoHub.Controllers
         private readonly IImageService _imageService;
         private readonly IS3Service _s3Service;
         private readonly IUserService _userService;
+        private readonly ICommentService _commentService;
 
-        public BlogPostController(IBlogPostService blogPostService, IImageService imageService, IS3Service s3Service, IUserService userService)
+        public BlogPostController(IBlogPostService blogPostService, IImageService imageService, IS3Service s3Service, IUserService userService, ICommentService commentService)
         {
             _blogPostService = blogPostService;
             _imageService = imageService;
             _userService = userService;
             _s3Service = s3Service;
+            _commentService = commentService;
         }
         // GET: BlogPostController
         public async Task<IActionResult> Index()
@@ -34,6 +37,7 @@ namespace PhotoHub.Controllers
             {
                 var viewModel = new BlogPostViewModel
                 {
+                    IdBlogPost = bp.IdBlogPost,
                     Title = bp.Title,
                     Content = bp.Content,
                     CreatedDate = bp.CreatedDate,
@@ -48,10 +52,42 @@ namespace PhotoHub.Controllers
         }
 
         // GET: BlogPostController/Details/5
-        public ActionResult Details(int id)
+        public async Task<IActionResult> Details(Guid id)
         {
-            return View();
+            var blogPost = await _blogPostService.GetBlogPostById(id);
+            var image = await _imageService.GetImageByBlogPostId(id);
+            var comments = await _commentService.GetCommentsByBlogPostId(id);
+
+            if (blogPost == null)
+            {
+                return NotFound();
+            }
+
+            var commentViewModels = new List<CommentViewModel>();
+            foreach (var comment in comments)
+            {
+                commentViewModels.Add(new CommentViewModel
+                {
+                    AuthorName = await _userService.GetUserNameById(comment.IdUser),
+                    Content = comment.Content,
+                    CreatedDate = comment.CreatedDate
+                });
+            }
+
+            var viewModel = new BlogPostDetailsViewModel
+            {
+                IdBlogPost = blogPost.IdBlogPost,
+                Title = blogPost.Title,
+                Content = blogPost.Content,
+                ImageUrl = image.Url,
+                AuthorName = await _userService.GetUserNameById(blogPost.AuthorId),
+                CreatedDate = blogPost.CreatedDate,
+                Comments = commentViewModels
+            };
+
+            return View(viewModel);
         }
+
 
         // GET: BlogPostController/Create
         [Authorize]

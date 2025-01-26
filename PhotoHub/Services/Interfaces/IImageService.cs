@@ -8,5 +8,6 @@ namespace PhotoHub.Services.Interfaces
         Task<IEnumerable<ImageModel>> GetAllImages();
         Task DeleteImage(Guid id);
         Task<ImageModel> GetImageById(Guid id);
+        Task<ImageModel> GetImageByBlogPostId(Guid id);
     }
 }

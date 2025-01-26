@@ -1,0 +1,42 @@
+﻿<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <img src="@Model.ImageUrl" class="card-img-top" alt="@Model.Title" />
+                <div class="card-body">
+                    <h1 class="card-title">@Model.Title</h1>
+                    <p class="text-muted">
+                        <small>By: @Model.AuthorName on @Model.CreatedDate.ToString("MMMM dd, yyyy")</small>
+                    </p>
+                    <p class="card-text">@Model.Content</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comment Section -->
+    <div class="row">
+        <div class="col-12">
+            <h4>Comments</h4>
+            <ul class="list-group mb-4">
+                @foreach (var comment in Model.Comments)
+                {
+                    <li class="list-group-item">
+                        <p><strong>@comment.AuthorName</strong> <small class="text-muted">on @comment.CreatedDate.ToString("MMMM dd, yyyy hh:mm tt")</small></p>
+                        <p>@comment.Content</p>
+                    </li>
+                }
+            </ul>
+
+            <!-- Add Comment Form -->
+            <form asp-action="AddComment" asp-controller="Comment" method="post">
+                <div class="form-group">
+                    <textarea name="Content" class="form-control" placeholder="Write your comment here..." rows="3" required></textarea>
+                </div>
+                <input type="hidden" name="IdBlogPost" value="@Model.IdBlogPost" />
+                <button type="submit" class="btn btn-primary mt-2">Post</button>
+            </form>
+        </div>
+    </div>
+</div>
+

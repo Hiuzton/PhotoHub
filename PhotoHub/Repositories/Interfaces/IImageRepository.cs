@@ -8,5 +8,6 @@ namespace PhotoHub.Repositories.Interfaces
         Task<IEnumerable<Image>> GetAllAsync();
         Task DeleteAsync(Guid id);
         Task<Image> GetByIdAsync(Guid id);
+        Task<Image> GetByBlogPostIdAsync(Guid id);
     }
 }

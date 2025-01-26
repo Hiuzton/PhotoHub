@@ -1,4 +1,5 @@
-﻿using PhotoHub.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using PhotoHub.Models;
 using PhotoHub.Models.DBObjects;
 using PhotoHub.Repositories.Interfaces;
 using PhotoHub.Services.Interfaces;
@@ -16,8 +17,14 @@ namespace PhotoHub.Services
 
         public async Task<CommentModel> GetCommentById(Guid id)
         {
-            var dbCommment = await _commentRepository.GetByIdAsync(id);
-            return dbCommment == null ? null : MapToBusinessModel(dbCommment);
+            var dbComment = await _commentRepository.GetByIdAsync(id);
+            return dbComment == null ? null : MapToBusinessModel(dbComment);
+        }
+
+        public async Task<IEnumerable<CommentModel>> GetCommentsByBlogPostId(Guid id)
+        {
+            var dbComment = await _commentRepository.GetCommentsByBlogPostId(id);
+            return dbComment.Select(MapToBusinessModel);
         }
 
         public async Task CreateComment(CommentModel commentModel)

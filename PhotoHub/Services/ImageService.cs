@@ -22,6 +22,12 @@ namespace PhotoHub.Services
             return dbImage == null ? null : MapToBusinessModel(dbImage);
         }
 
+        public async Task<ImageModel> GetImageByBlogPostId(Guid id)
+        {
+            var dbImage = await _imageRepository.GetByBlogPostIdAsync(id);
+            return dbImage == null ? null : MapToBusinessModel(dbImage);
+        }
+
         public async Task<IEnumerable<ImageModel>> GetAllImages()
         {
             var dbUsers = await _imageRepository.GetAllAsync();

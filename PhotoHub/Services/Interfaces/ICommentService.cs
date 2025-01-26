@@ -8,5 +8,6 @@ namespace PhotoHub.Services.Interfaces
         Task DeleteComment(Guid id);
         Task<CommentModel> GetCommentById(Guid id);
         Task UpdateComment(CommentModel commentModel);
+        Task<IEnumerable<CommentModel>> GetCommentsByBlogPostId(Guid id);
     }
 }
