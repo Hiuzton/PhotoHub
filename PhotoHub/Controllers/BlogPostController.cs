@@ -68,6 +68,7 @@ namespace PhotoHub.Controllers
             {
                 commentViewModels.Add(new CommentViewModel
                 {
+                    IdAuthor = comment.IdUser,
                     AuthorName = await _userService.GetUserNameById(comment.IdUser),
                     Content = comment.Content,
                     CreatedDate = comment.CreatedDate
@@ -76,6 +77,7 @@ namespace PhotoHub.Controllers
 
             var viewModel = new BlogPostDetailsViewModel
             {
+                IdAuthor = blogPost.AuthorId,
                 IdBlogPost = blogPost.IdBlogPost,
                 Title = blogPost.Title,
                 Content = blogPost.Content,

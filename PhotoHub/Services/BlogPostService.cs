@@ -27,10 +27,10 @@ namespace PhotoHub.Service
             return dbBlogPost == null ? null : MapToBusinessModel(dbBlogPost);
         }
 
-        public async Task<int> GetBlogPostCountByAuthorId(Guid id)
+        public async Task<IEnumerable<BlogPostModel>> GetBlogPostByAuthorId(Guid id)
         {
             var blogPostCount = await _blogPostRepository.GetAllPostsByAuthorId(id);
-            return blogPostCount == 0 ? 0 : blogPostCount;
+            return blogPostCount.Select(MapToBusinessModel);
         }
 
         public async Task CreateBlogPost(BlogPostModel blogPost)

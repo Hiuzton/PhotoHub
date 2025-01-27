@@ -6,7 +6,9 @@
                 <div class="card-body">
                     <h1 class="card-title">@Model.Title</h1>
                     <p class="text-muted">
-                        <small>By: @Model.AuthorName on @Model.CreatedDate.ToString("MMMM dd, yyyy")</small>
+                        <small>By: 
+                        <a asp-action="Details" asp-controller="User" asp-route-id="@Model.IdAuthor" style="text-decoration: none; color: inherit;">@Model.AuthorName </a> 
+                        on @Model.CreatedDate.ToString("MMMM dd, yyyy")</small>
                     </p>
                     <p class="card-text">@Model.Content</p>
                 </div>
@@ -22,7 +24,12 @@
                 @foreach (var comment in Model.Comments)
                 {
                     <li class="list-group-item">
-                        <p><strong>@comment.AuthorName</strong> <small class="text-muted">on @comment.CreatedDate.ToString("MMMM dd, yyyy hh:mm tt")</small></p>
+                        <p>
+                            <strong>
+                                <a asp-action="Details" asp-controller="User" asp-route-id="@comment.IdAuthor" style="text-decoration: none; color: inherit;">@comment.AuthorName </a>
+                            </strong> 
+                            <small class="text-muted">on @comment.CreatedDate.ToString("MMMM dd, yyyy hh:mm tt")</small>
+                        </p>
                         <p>@comment.Content</p>
                     </li>
                 }

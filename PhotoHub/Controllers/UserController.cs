@@ -14,11 +14,13 @@ namespace PhotoHub.Controllers
     {
         private readonly IUserService _userService;
         private readonly IBlogPostService _blogPostService;
+        private readonly IImageService _imageService;
 
-        public UserController(IUserService userService, IBlogPostService blogPostService)
+        public UserController(IUserService userService, IBlogPostService blogPostService, IImageService imageService)
         {
             _userService = userService;
             _blogPostService = blogPostService;
+            _imageService = imageService;
         }
 
         // GET: UserController
@@ -35,7 +37,7 @@ namespace PhotoHub.Controllers
                 {
                     IdUser = user.IdUser,
                     Username = user.Username,
-                    PostsNumber = (await _blogPostService.GetBlogPostCountByAuthorId(user.IdUser)).ToString(),
+                    PostsNumber = (await _blogPostService.GetBlogPostByAuthorId(user.IdUser)).Count().ToString(),
                 };
                 userViewModeList.Add(userModel);
             }
@@ -44,9 +46,34 @@ namespace PhotoHub.Controllers
         }
 
         // GET: UserController/Details/5
-        public ActionResult Details(int id)
+        public async Task<IActionResult> Details(Guid id)
         {
-            return View();
+            var user = await _userService.GetUserByIdAsync(id);
+            var blogPosts = await _blogPostService.GetBlogPostByAuthorId(user.IdUser);
+
+            var images = new List<ImageModel>();
+
+            foreach (var bp in blogPosts)
+            {
+                var image = await _imageService.GetImageByBlogPostId(bp.IdBlogPost);
+                if (image != null)
+                {
+                    images.Add(new ImageModel
+                    {
+                        IdImage = image.IdImage,
+                        IdBlogPost = bp.IdBlogPost,
+                        Url = image.Url
+                    });
+                }
+            }
+
+            var userDetails = new UserDetailsViewModel
+            {
+                Username = user.Username,
+                Images = images
+            };
+
+            return View(userDetails);
         }
 
         // GET: UserController/Create

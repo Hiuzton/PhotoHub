@@ -3,6 +3,7 @@
     public class BlogPostDetailsViewModel
     {
         public Guid IdBlogPost { get; set; }
+        public Guid IdAuthor { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
         public string ImageUrl { get; set; }

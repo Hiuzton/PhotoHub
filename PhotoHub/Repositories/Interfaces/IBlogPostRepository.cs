@@ -9,6 +9,6 @@ namespace PhotoHub.Repositories.Interfaces
         Task DeleteAsync(Guid id);
         Task<BlogPost> GetByIdAsync(Guid id);
         Task UpdateAsync(BlogPost blogPost);
-        Task<int> GetAllPostsByAuthorId(Guid id);
+        Task<IEnumerable<BlogPost>> GetAllPostsByAuthorId(Guid id);
     }
 }
