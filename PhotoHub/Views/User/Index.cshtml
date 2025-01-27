@@ -1,0 +1,23 @@
+﻿@model IEnumerable<PhotoHub.ViewModels.UserListViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Creators</h1>
+<div class="container">
+    <div class="row justify-content-center">
+        <ul class="list-group mb-4">
+            @foreach (var item in Model)
+            {
+                <a asp-action="Details" asp-controller="User" asp-route-id="@item.IdUser" style="text-decoration: none; color: inherit;">
+                    <li class="list-group-item">
+                        <p><strong>@item.Username</strong></p>
+                        <p>Posts: @item.PostsNumber</p>
+                    </li>
+                </a>
+            }
+        </ul>
+    </div>
+</div>

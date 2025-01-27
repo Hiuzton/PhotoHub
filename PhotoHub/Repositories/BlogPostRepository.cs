@@ -23,6 +23,13 @@ namespace PhotoHub.Repositories
             return await _context.BlogPosts.ToListAsync();
         }
 
+        public async Task<int> GetAllPostsByAuthorId(Guid id)
+        {
+            return await _context.BlogPosts
+                .Where(b => b.AuthorId == id)
+                .CountAsync();
+        }
+
         public async Task AddAsync(BlogPost blogPost)
         {
             await _context.BlogPosts.AddAsync(blogPost);

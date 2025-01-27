@@ -9,5 +9,6 @@ namespace PhotoHub.Services.Interfaces
         Task DeleteBlogPost(Guid id);
         Task<BlogPostModel> GetBlogPostById(Guid id);
         Task UpdateBlogPost(BlogPostModel blogPost);
+        Task<int> GetBlogPostCountByAuthorId(Guid id);
     }
 }

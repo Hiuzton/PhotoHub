@@ -6,22 +6,41 @@ using PhotoHub.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using PhotoHub.Models.DBObjects;
+using PhotoHub.ViewModels;
 
 namespace PhotoHub.Controllers
 {
     public class UserController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IBlogPostService _blogPostService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IBlogPostService blogPostService)
         {
             _userService = userService;
+            _blogPostService = blogPostService;
         }
 
         // GET: UserController
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var users = (await _userService.GetAllUsersAsync()).ToList();
+            var blogPosts = (await _blogPostService.GetAllBlogPosts()).ToList();
+
+
+            var userViewModeList = new List<UserListViewModel>();
+            foreach (var user in users)
+            {
+                var userModel = new UserListViewModel
+                {
+                    IdUser = user.IdUser,
+                    Username = user.Username,
+                    PostsNumber = (await _blogPostService.GetBlogPostCountByAuthorId(user.IdUser)).ToString(),
+                };
+                userViewModeList.Add(userModel);
+            }
+
+            return View(userViewModeList);
         }
 
         // GET: UserController/Details/5
@@ -87,7 +106,7 @@ namespace PhotoHub.Controllers
                 var authProperties = new AuthenticationProperties 
                 { 
                     IsPersistent = rememberMe,
-                    ExpiresUtc = DateTime.UtcNow.AddMinutes(30)
+                    //ExpiresUtc = DateTime.UtcNow.AddMinutes(30)
                 };
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);

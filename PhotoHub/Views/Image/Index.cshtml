@@ -7,9 +7,11 @@
         @foreach (var image in Model)
         {
             <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img src="@image.Url" class="card-img-top" alt="Image @image.IdImage" />
-                </div>
+                <a asp-action="Details" asp-controller="BlogPost" asp-route-id="@image.IdBlogPost" style="text-decoration: none; color: inherit;">
+                    <div class="card">
+                        <img src="@image.Url" class="card-img-top" alt="Image @image.IdImage" />
+                    </div>
+                </a>
             </div>
         }
     </div>
