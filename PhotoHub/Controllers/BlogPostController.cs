@@ -68,6 +68,7 @@ namespace PhotoHub.Controllers
             {
                 commentViewModels.Add(new CommentViewModel
                 {
+                    IdComment = comment.IdComment,
                     IdAuthor = comment.IdUser,
                     AuthorName = await _userService.GetUserNameById(comment.IdUser),
                     Content = comment.Content,

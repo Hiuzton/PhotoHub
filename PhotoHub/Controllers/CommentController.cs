@@ -38,6 +38,34 @@ namespace PhotoHub.Controllers
             return RedirectToAction("Details", "BlogPost", new { id = model.IdBlogPost });
         }
 
+        [HttpGet]
+        public async Task<IActionResult> EditComment(Guid id)
+        {
+            var comment = await _commentService.GetCommentById(id);
+            if (comment == null)
+            {
+                return NotFound();
+            }
+
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DeleteComment(Guid id)
+        {
+            var comment = await _commentService.GetCommentById(id);
+            if (comment == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                await _commentService.DeleteComment(id);
+            }
+
+            return RedirectToAction("Index", "BlogPost");
+        }
+
         // GET: CommentController
         public ActionResult Index()
         {
@@ -102,7 +130,7 @@ namespace PhotoHub.Controllers
         // POST: CommentController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(Guid id)
         {
             try
             {
