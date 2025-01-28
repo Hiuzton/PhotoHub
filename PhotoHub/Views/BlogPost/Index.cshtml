@@ -1,9 +1,6 @@
-﻿@model IEnumerable<PhotoHub.ViewModels.BlogPostViewModel>
-
-@{
-    ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
+﻿@model X.PagedList.IPagedList<PhotoHub.ViewModels.BlogPostViewModel>
+@using X.PagedList
+@using X.PagedList.Mvc.Core
 
 <h1 class="text-center">Latest Posts</h1>
 
@@ -32,6 +29,11 @@
     </div>
 </div>
 
+<!-- Pagination -->
+<div class="pagination-container text-center">
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+</div>
+
 
 <style>
     .card {
@@ -53,5 +55,45 @@
         height: 20px;
         overflow: hidden;
     }
-</style>
 
+    .pagination-container {
+        margin-top: 30px;
+    }
+
+    .pagination {
+        display: inline-block;
+        padding: 10px 0;
+        list-style: none;
+        border-radius: 5px;
+    }
+
+    .pagination li {
+        display: inline;
+    }
+
+    .pagination li a {
+        color: #007bff;
+        padding: 8px 16px;
+        text-decoration: none;
+        margin: 0 5px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .pagination li a:hover {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .pagination li.active a {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+    .pagination li.disabled a {
+        color: #ccc;
+        cursor: not-allowed;
+    }
+</style>

@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PhotoHub.Models;
-using PhotoHub.Services;
 using PhotoHub.Services.Interfaces;
 using PhotoHub.ViewModels;
-using System.Runtime.InteropServices;
+using X.PagedList.Extensions;
 
 namespace PhotoHub.Controllers
 {
@@ -26,9 +24,9 @@ namespace PhotoHub.Controllers
             _commentService = commentService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 5)
         {
-            var blogPosts = (await _blogPostService.GetAllBlogPosts()).ToList();
+            var blogPosts = (await _blogPostService.GetAllBlogPosts());
             var images = (await _imageService.GetAllImages()).ToList();
 
             var blogPostViewModels = new List<BlogPostViewModel>();
@@ -46,8 +44,11 @@ namespace PhotoHub.Controllers
                 };
                 blogPostViewModels.Add(viewModel);
             }
-            return View(blogPostViewModels.OrderByDescending(vm => vm.CreatedDate));
+            var pagedList = blogPostViewModels.OrderByDescending(bp => bp.CreatedDate).ToPagedList(page, pageSize);
+
+            return View(pagedList);
         }
+
         public async Task<IActionResult> Details(Guid id)
         {
             var blogPost = await _blogPostService.GetBlogPostById(id);
