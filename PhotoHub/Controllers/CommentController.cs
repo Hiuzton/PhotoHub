@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PhotoHub.Models;
 using PhotoHub.Models.DBObjects;
+using PhotoHub.Services;
 using PhotoHub.Services.Interfaces;
 using PhotoHub.ViewModels;
 using System.Security.Claims;
@@ -11,28 +11,43 @@ namespace PhotoHub.Controllers
     public class CommentController : Controller
     {
         private readonly ICommentService _commentService;
+        private readonly IUserService _userService;
+        private readonly IBlogPostService _blogPostService;
+        private readonly IImageService _imageService;
 
-        public CommentController(ICommentService commentService)
+        public CommentController(ICommentService commentService, IUserService userService, IBlogPostService blogPostService, IImageService imageService)
         {
             _commentService = commentService;
+            _userService = userService;
+            _blogPostService = blogPostService;
+            _imageService = imageService;
         }
 
+        // Add Comment
         [HttpPost]
         public async Task<IActionResult> AddComment(AddCommentViewModel model)
         {
-           
             if (ModelState.IsValid)
             {
+                var userId = User.FindFirst("UserGuid")?.Value;
+
+                if (userId == null)
+                {
+                    return Unauthorized();
+                }
+
                 var comment = new CommentModel
                 {
                     IdComment = Guid.NewGuid(),
                     IdBlogPost = model.IdBlogPost,
-                    IdUser = Guid.Parse(User.FindFirst("UserGuid")?.Value),
+                    IdUser = Guid.Parse(userId),
                     Content = model.Content,
                     CreatedDate = DateTime.UtcNow
                 };
 
                 await _commentService.CreateComment(comment);
+
+                return RedirectToAction("Details", "BlogPost", new { id = model.IdBlogPost });
             }
 
             return RedirectToAction("Details", "BlogPost", new { id = model.IdBlogPost });
@@ -41,16 +56,41 @@ namespace PhotoHub.Controllers
         [HttpGet]
         public async Task<IActionResult> EditComment(Guid id)
         {
+            TempData["EditingCommentId"] = id;
+
             var comment = await _commentService.GetCommentById(id);
             if (comment == null)
             {
                 return NotFound();
             }
 
-            return View();
+            return RedirectToAction("Details", "BlogPost", new { id = comment.IdBlogPost });
         }
 
-        [HttpGet]
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditComment(EditCommentViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var comment = await _commentService.GetCommentById(model.IdComment);
+                if (comment == null)
+                {
+                    return NotFound();
+                }
+
+                comment.Content = model.Content;
+                comment.CreatedDate = DateTime.UtcNow;
+
+                await _commentService.UpdateComment(comment);
+            }
+
+            return RedirectToAction("Details", "BlogPost", new { id = model.IdBlogPost });
+        }
+
+        [HttpPost]
         public async Task<IActionResult> DeleteComment(Guid id)
         {
             var comment = await _commentService.GetCommentById(id);
@@ -58,88 +98,10 @@ namespace PhotoHub.Controllers
             {
                 return NotFound();
             }
-            else
-            {
-                await _commentService.DeleteComment(id);
-            }
 
-            return RedirectToAction("Index", "BlogPost");
-        }
+            await _commentService.DeleteComment(id);
 
-        // GET: CommentController
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-        // GET: CommentController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-
-        // GET: CommentController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: CommentController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: CommentController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: CommentController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: CommentController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: CommentController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(Guid id)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction("Details", "BlogPost", new { id = comment.IdBlogPost });
         }
     }
 }

@@ -25,7 +25,7 @@ namespace PhotoHub.Controllers
             _s3Service = s3Service;
             _commentService = commentService;
         }
-        // GET: BlogPostController
+
         public async Task<IActionResult> Index()
         {
             var blogPosts = (await _blogPostService.GetAllBlogPosts()).ToList();
@@ -42,64 +42,57 @@ namespace PhotoHub.Controllers
                     Content = bp.Content,
                     CreatedDate = bp.CreatedDate,
                     ImageUrl = images.FirstOrDefault(img => img.IdBlogPost == bp.IdBlogPost)?.Url,
-                    AuthorName = await _userService.GetUserNameById(bp.AuthorId) // Avoid parallel calls
+                    AuthorName = await _userService.GetUserNameById(bp.AuthorId)
                 };
                 blogPostViewModels.Add(viewModel);
             }
-
-            // Order by CreatedDate in descending order
             return View(blogPostViewModels.OrderByDescending(vm => vm.CreatedDate));
         }
-
-        // GET: BlogPostController/Details/5
         public async Task<IActionResult> Details(Guid id)
         {
             var blogPost = await _blogPostService.GetBlogPostById(id);
-            var image = await _imageService.GetImageByBlogPostId(id);
-            var comments = await _commentService.GetCommentsByBlogPostId(id);
-
             if (blogPost == null)
             {
                 return NotFound();
             }
 
-            var commentViewModels = new List<CommentViewModel>();
-            foreach (var comment in comments)
+            var comments = await _commentService.GetCommentsByBlogPostId(id);
+            var commentViewModels = comments.Select(c => new CommentViewModel
             {
-                commentViewModels.Add(new CommentViewModel
-                {
-                    IdComment = comment.IdComment,
-                    IdAuthor = comment.IdUser,
-                    AuthorName = await _userService.GetUserNameById(comment.IdUser),
-                    Content = comment.Content,
-                    CreatedDate = comment.CreatedDate
-                });
-            }
+                IdComment = c.IdComment,
+                Content = c.Content,
+                IdAuthor = c.IdUser,
+                AuthorName = _userService.GetUserNameById(c.IdUser).Result,
+                CreatedDate = c.CreatedDate
+            }).ToList();
 
             var viewModel = new BlogPostDetailsViewModel
             {
-                IdAuthor = blogPost.AuthorId,
                 IdBlogPost = blogPost.IdBlogPost,
                 Title = blogPost.Title,
                 Content = blogPost.Content,
-                ImageUrl = image.Url,
+                ImageUrl = (await _imageService.GetImageByBlogPostId(blogPost.IdBlogPost))?.Url,
+                IdAuthor = blogPost.AuthorId,
                 AuthorName = await _userService.GetUserNameById(blogPost.AuthorId),
                 CreatedDate = blogPost.CreatedDate,
                 Comments = commentViewModels
             };
 
+            if (TempData["EditingCommentId"] != null)
+            {
+                ViewData["EditingCommentId"] = TempData["EditingCommentId"];
+            }
+
             return View(viewModel);
         }
 
 
-        // GET: BlogPostController/Create
         [Authorize]
         public ActionResult CreateBlogPost()
         {
             return View();
         }
 
-        // POST: BlogPostController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -151,48 +144,6 @@ namespace PhotoHub.Controllers
 
                 if(image != null)
                     await _imageService.CreateImage(image);
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: BlogPostController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: BlogPostController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: BlogPostController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: BlogPostController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
                 return RedirectToAction(nameof(Index));
             }
             catch

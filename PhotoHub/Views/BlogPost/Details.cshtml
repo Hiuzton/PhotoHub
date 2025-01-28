@@ -18,48 +18,62 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Comment Section -->
-    <div class="row">
-        <div class="col-12">
-            <h4>Comments</h4>
-            <ul class="list-group mb-4">
-                @foreach (var comment in Model.Comments)
-                {
-                    <li class="list-group-item">
-                        <div class="comment-container d-flex justify-content-between align-items-center">
-                            <div class="comment-content">
-                                <p>
-                                    <strong>
-                                        <a asp-action="Details" asp-controller="User" asp-route-id="@comment.IdAuthor" style="text-decoration: none; color: inherit;">@comment.AuthorName </a>
-                                    </strong>
-                                    <small class="text-muted">on @comment.CreatedDate.ToString("MMMM dd, yyyy hh:mm tt")</small>
-                                </p>
-                                <p>@comment.Content</p>
-                            </div>
-                            <div class="comment-actions">
-                                <a asp-action="EditComment" asp-controller="Comment" asp-route-id="@comment.IdComment" class="btn btn-link p-0 me-2">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a asp-action="DeleteComment" asp-controller="Comment" method="post" asp-route-id="@comment.IdComment" class="btn btn-link p-0 text-danger" onclick="return confirm('Are you sure you want to delete this comment?');">
-                                    <i class="fas fa-trash-alt"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </li>
-                }
-            </ul>
-
-            <!-- Add Comment Form -->
-            <form asp-action="AddComment" asp-controller="Comment" method="post">
-                <div class="form-group">
-                    <textarea name="Content" class="form-control" placeholder="Write your comment here..." rows="3" required></textarea>
+    </div><h4>Comments</h4>
+    <ul class="list-group mb-4">
+        @foreach (var comment in Model.Comments)
+        {
+            <li class="list-group-item">
+                <div class="comment-container d-flex justify-content-between align-items-center">
+                    <div class="comment-content">
+                        @if (ViewData["EditingCommentId"] != null && (Guid)ViewData["EditingCommentId"] == comment.IdComment)
+                         {
+                            <!-- Edit Comment Form -->
+                            <form asp-action="EditComment" asp-controller="Comment" method="post" class="w-100">
+                                <input type="hidden" name="IdComment" value="@comment.IdComment" />
+                                <input type="hidden" name="IdBlogPost" value="@Model.IdBlogPost" />
+                                <textarea name="Content" class="form-control" rows="3" required>@comment.Content</textarea>
+                                <button type="submit" class="btn btn-success mt-2">Save</button>
+                                <a asp-action="Details" asp-controller="BlogPost" asp-route-id="@Model.IdBlogPost" class="btn btn-secondary mt-2">Cancel</a>
+                            </form>
+                        }
+                        else
+                        {
+                            <!-- Display Comment -->
+                            <p>
+                                <strong>
+                                    <a asp-action="Details" asp-controller="User" asp-route-id="@comment.IdAuthor" style="text-decoration: none; color: inherit;">@comment.AuthorName </a>
+                                </strong>
+                                <small class="text-muted">on @comment.CreatedDate.ToString("MMMM dd, yyyy hh:mm tt")</small>
+                            </p>
+                            <p>@comment.Content</p>
+                        }
+                    </div>
+                    <div class="comment-actions">
+                        @if (ViewData["EditingCommentId"] == null || (Guid)ViewData["EditingCommentId"] != comment.IdComment)
+                        {
+                            <a asp-action="EditComment" asp-controller="Comment" asp-route-id="@comment.IdComment" class="btn btn-link p-0 me-2">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        }
+                        <a asp-action="DeleteComment" asp-controller="Comment" method="post" asp-route-id="@comment.IdComment" class="btn btn-link p-0 text-danger" onclick="return confirm('Are you sure you want to delete this comment?');">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </div>
                 </div>
-                <input type="hidden" name="IdBlogPost" value="@Model.IdBlogPost" />
-                <button type="submit" class="btn btn-primary mt-2">Post</button>
-            </form>
+            </li>
+        }
+    </ul>
+
+    <!-- Add Comment Form -->
+    <h5>Add a Comment</h5>
+    <form asp-action="AddComment" asp-controller="Comment" method="post">
+        <div class="form-group">
+            <textarea name="Content" class="form-control" placeholder="Write your comment here..." rows="3" required></textarea>
         </div>
-    </div>
+        <input type="hidden" name="IdBlogPost" value="@Model.IdBlogPost" />
+        <button type="submit" class="btn btn-primary mt-2">Post</button>
+    </form>
+
+
 </div>
 

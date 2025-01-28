@@ -38,7 +38,8 @@ namespace PhotoHub.Repositories
 
         public async Task<Comment> GetByIdAsync(Guid id)
         {
-            return await _context.Comments.FindAsync(id);
+            return await _context.Comments.AsNoTracking()
+                .FirstOrDefaultAsync(c => c.IdComment == id);
         }
 
         public async Task<List<Comment>> GetCommentsByBlogPostId(Guid blogPostId)

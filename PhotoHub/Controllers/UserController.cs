@@ -23,7 +23,6 @@ namespace PhotoHub.Controllers
             _imageService = imageService;
         }
 
-        // GET: UserController
         public async Task<IActionResult> Index()
         {
             var users = (await _userService.GetAllUsersAsync()).ToList();
@@ -45,7 +44,6 @@ namespace PhotoHub.Controllers
             return View(userViewModeList);
         }
 
-        // GET: UserController/Details/5
         public async Task<IActionResult> Details(Guid id)
         {
             var user = await _userService.GetUserByIdAsync(id);
@@ -76,13 +74,11 @@ namespace PhotoHub.Controllers
             return View(userDetails);
         }
 
-        // GET: UserController/Create
         public ActionResult Register()
         {
             return View("Register");
         }
 
-        // POST: UserController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(IFormCollection collection)
@@ -133,7 +129,6 @@ namespace PhotoHub.Controllers
                 var authProperties = new AuthenticationProperties 
                 { 
                     IsPersistent = rememberMe,
-                    //ExpiresUtc = DateTime.UtcNow.AddMinutes(30)
                 };
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
@@ -149,48 +144,6 @@ namespace PhotoHub.Controllers
         {
             HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");
-        }
-
-        // GET: UserController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: UserController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: UserController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: UserController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
         }
     }
 }
