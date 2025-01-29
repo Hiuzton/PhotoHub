@@ -5,7 +5,7 @@ namespace PhotoHub.ViewModels
     public class HomeViewModel
     {
         public List<BlogPostViewModel> LatestPosts { get; set; }
-        public List<UserViewModel> RandomUsers { get; set; }
+        public List<UserListViewModel> RandomUsers { get; set; }
     }
 }
 

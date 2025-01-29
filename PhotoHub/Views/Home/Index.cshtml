@@ -1,8 +1,66 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model PhotoHub.ViewModels.HomeViewModel
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h1 class="text-center">Welcome to PhotoHub</h1>
+
+<section class="container mt-4">
+    <h2 class="text-center">Latest Blog Posts</h2>
+    <div class="row">
+        @foreach (var post in Model.LatestPosts)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="@post.ImageUrl" class="card-img-top" alt="@post.Title">
+                    <div class="card-body">
+                        <h5 class="card-title">@post.Title</h5>
+                        <p class="card-text">@post.Content</p>
+                        <a asp-controller="BlogPost" asp-action="Details" asp-route-id="@post.IdBlogPost" class="btn btn-primary">View More</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<section class="container mt-4">
+    <h2 class="text-center">Featured Users</h2>
+    <div class="row text-center">
+        @foreach (var user in Model.RandomUsers)
+        {
+            <div class="col-md-3 mb-4">
+                <div class="card p-3">
+                    <h5 class="card-title">@user.Username</h5>
+                    <a asp-controller="User" asp-action="Details" asp-route-id="@user.IdUser" class="btn btn-secondary">View Profile</a>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<section class="container mt-5">
+    <h2 class="text-center">About PhotoHub</h2>
+    <p class="text-center">
+        PhotoHub is a platform where users can share and explore amazing blog posts about photography.
+        Discover insightful articles, engage with the community, and enhance your skills.
+    </p>
+</section>
+
+<style>
+    .card {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        transition: transform 0.3s;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+    h2 {
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    p {
+        font-size: 18px;
+    }
+</style>
