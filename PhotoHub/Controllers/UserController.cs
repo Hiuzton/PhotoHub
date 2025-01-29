@@ -78,27 +78,32 @@ namespace PhotoHub.Controllers
         {
             return View("Register");
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(IFormCollection collection)
+        public async Task<IActionResult> Register(UserViewModel userViewModel)
         {
-            try
+            if (ModelState.IsValid)
             {
-                var user = new UserModel();
-                user.IdUser = Guid.NewGuid();
-                user.Role = "User";
-                if (await TryUpdateModelAsync(user))
+                if (userViewModel.PasswordHash != userViewModel.ConfirmPassword)
                 {
-                    await _userService.Register(user);
-                    return RedirectToAction("Login");
+                    ModelState.AddModelError("ConfirmPassword", "Passwords do not match.");
+                    return View(userViewModel);
                 }
+
+                var user = new UserModel
+                {
+                    IdUser = Guid.NewGuid(),
+                    Username = userViewModel.Username,
+                    Email = userViewModel.Email,
+                    PasswordHash = userViewModel.PasswordHash,
+                    Role = "User"
+                };
+
+                await _userService.Register(user);
                 return RedirectToAction("Login");
             }
-            catch
-            {
-                return View("Login");
-            }
+
+            return View(userViewModel);
         }
 
         public ActionResult Login()
