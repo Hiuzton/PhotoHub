@@ -1,9 +1,21 @@
 ﻿@using Microsoft.AspNetCore.Identity
 
+@using Microsoft.AspNetCore.Identity
+
 @{
-    var currentUserId = Guid.Parse(User.FindFirst("UserGuid")?.Value);
-    var isAuthor = Model.IdAuthor == currentUserId;
+    Guid? currentUserId = null;
+    if (User.Identity.IsAuthenticated)
+    {
+        var userGuidClaim = User.FindFirst("UserGuid")?.Value;
+        if (!string.IsNullOrEmpty(userGuidClaim) && Guid.TryParse(userGuidClaim, out Guid parsedGuid))
+        {
+            currentUserId = parsedGuid;
+        }
+    }
+
+    var isAuthor = currentUserId.HasValue && Model.IdAuthor == currentUserId.Value;
 }
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <div class="container">
@@ -97,15 +109,16 @@
     </ul>
 
     <!-- Add Comment Form -->
-    <h5>Add a Comment</h5>
-    <form asp-action="AddComment" asp-controller="Comment" method="post">
-        <div class="form-group">
-            <textarea name="Content" class="form-control" placeholder="Write your comment here..." rows="3" required></textarea>
-        </div>
-        <input type="hidden" name="IdBlogPost" value="@Model.IdBlogPost" />
-        <button type="submit" class="btn btn-primary mt-2">Post</button>
-    </form>
-
-
+    @if (User.Identity.IsAuthenticated)
+    {
+        <h5>Add a Comment</h5>
+        <form asp-action="AddComment" asp-controller="Comment" method="post">
+            <div class="form-group">
+                <textarea name="Content" class="form-control" placeholder="Write your comment here..." rows="3" required></textarea>
+            </div>
+            <input type="hidden" name="IdBlogPost" value="@Model.IdBlogPost" />
+            <button type="submit" class="btn btn-primary mt-2">Post</button>
+        </form>
+    }
 </div>
 

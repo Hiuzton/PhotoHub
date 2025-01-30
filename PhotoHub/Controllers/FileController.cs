@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PhotoHub.Services.Interfaces;
 
 namespace PhotoHub.Controllers
@@ -12,14 +13,9 @@ namespace PhotoHub.Controllers
             _s3Service = s3Service;
         }
 
-        [HttpGet]
-        public IActionResult UploadFile()
-        {
-            return View();
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> UploadFile(IFormFile file)
         {
             if (file == null || file.Length == 0)

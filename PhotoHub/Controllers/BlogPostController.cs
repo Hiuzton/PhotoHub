@@ -157,6 +157,7 @@ namespace PhotoHub.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> EditPost(Guid id)
         {
             var blogPost = await _blogPostService.GetBlogPostById(id);
@@ -175,6 +176,7 @@ namespace PhotoHub.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> EditPost(BlogPostModel model)
         {
             if (!ModelState.IsValid)
@@ -194,6 +196,7 @@ namespace PhotoHub.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> DeletePost(Guid id)
         {
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PhotoHub.Models;
 using PhotoHub.Models.DBObjects;
 using PhotoHub.Services;
@@ -25,6 +26,7 @@ namespace PhotoHub.Controllers
 
         // Add Comment
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> AddComment(AddCommentViewModel model)
         {
             if (ModelState.IsValid)
@@ -54,6 +56,7 @@ namespace PhotoHub.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> EditComment(Guid id)
         {
             TempData["EditingCommentId"] = id;
@@ -71,6 +74,7 @@ namespace PhotoHub.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> EditComment(EditCommentViewModel model)
         {
             if (ModelState.IsValid)
@@ -90,6 +94,7 @@ namespace PhotoHub.Controllers
             return RedirectToAction("Details", "BlogPost", new { id = model.IdBlogPost });
         }
 
+        [Authorize]
         public async Task<IActionResult> DeleteComment(Guid id)
         {
             var comment = await _commentService.GetCommentById(id);

@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using PhotoHub.Models;
 using PhotoHub.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using PhotoHub.Models.DBObjects;
 using PhotoHub.ViewModels;
 
 namespace PhotoHub.Controllers

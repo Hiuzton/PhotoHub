@@ -3,10 +3,12 @@
 @using X.PagedList.Mvc.Core
 
 <h1 class="text-center">Posts</h1>
-
-<p class="text-end">
-    <a class="btn btn-primary" asp-action="CreateBlogPost">Create New</a>
-</p>
+ @if (User.Identity.IsAuthenticated)
+ {
+    <p class="text-end">
+        <a class="btn btn-primary" asp-action="CreateBlogPost">Create New</a>
+    </p>
+}
 <div class="container">
     <div class="row justify-content-center">
         @foreach (var item in Model)
@@ -29,7 +31,6 @@
     </div>
 </div>
 
-<!-- Pagination -->
 <div class="pagination-container text-center">
     @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
 </div>
