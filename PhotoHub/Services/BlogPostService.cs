@@ -57,7 +57,7 @@ namespace PhotoHub.Service
                 IdBlogPost = dbBlogPost.IdBlogPost,
                 Title = dbBlogPost.Title,
                 Content = dbBlogPost.Content,
-                AuthorId = dbBlogPost.AuthorId,
+                IdAuthor = dbBlogPost.AuthorId,
                 CreatedDate = dbBlogPost.CreatedDate,
             };
         }
@@ -69,7 +69,7 @@ namespace PhotoHub.Service
                 IdBlogPost = blogPostModel.IdBlogPost,
                 Title = blogPostModel.Title,
                 Content = blogPostModel.Content,
-                AuthorId = blogPostModel.AuthorId,
+                AuthorId = blogPostModel.IdAuthor,
                 CreatedDate = blogPostModel.CreatedDate,
             };
         }

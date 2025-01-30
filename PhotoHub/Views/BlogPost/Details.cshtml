@@ -1,4 +1,10 @@
-﻿<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+﻿@using Microsoft.AspNetCore.Identity
+
+@{
+    var currentUserId = Guid.Parse(User.FindFirst("UserGuid")?.Value);
+    var isAuthor = Model.IdAuthor == currentUserId;
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <div class="container">
     <div class="row">
@@ -8,25 +14,45 @@
                 <div class="card-body">
                     <h1 class="card-title">@Model.Title</h1>
                     <p class="text-muted">
-                        <small>By: 
+                        <small>
+                            By:
                             <strong>
-                                <a asp-action="Details" asp-controller="User" asp-route-id="@Model.IdAuthor" style="text-decoration: none; color: inherit;">@Model.AuthorName </a>
+                                <a asp-action="Details" asp-controller="User" asp-route-id="@Model.IdAuthor" style="text-decoration: none; color: inherit;">@Model.AuthorName</a>
                             </strong>
-                            on @Model.CreatedDate.ToString("MMMM dd, yyyy")</small>
+                            on @Model.CreatedDate.ToString("MMMM dd, yyyy")
+                        </small>
                     </p>
                     <p class="card-text">@Model.Content</p>
+                    @if (isAuthor)
+                    {
+                        <div class="d-flex justify-content-end mt-3">
+                            <a asp-action="EditPost" asp-controller="BlogPost" asp-route-id="@Model.IdBlogPost" class="btn btn-warning me-2">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <form asp-action="DeletePost" asp-controller="BlogPost" asp-route-id="@Model.IdBlogPost" method="post" onsubmit="return confirm('Are you sure you want to delete this post?');">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </button>
+                            </form>
+                        </div>
+                    }
                 </div>
+
             </div>
         </div>
-    </div><h4>Comments</h4>
+    </div>
+
+    <h4>Comments</h4>
     <ul class="list-group mb-4">
         @foreach (var comment in Model.Comments)
         {
+            var isCommentAuthor = comment.IdAuthor == currentUserId;
+
             <li class="list-group-item">
                 <div class="comment-container d-flex justify-content-between align-items-center">
                     <div class="comment-content">
                         @if (ViewData["EditingCommentId"] != null && (Guid)ViewData["EditingCommentId"] == comment.IdComment)
-                         {
+                        {
                             <!-- Edit Comment Form -->
                             <form asp-action="EditComment" asp-controller="Comment" method="post" class="w-100">
                                 <input type="hidden" name="IdComment" value="@comment.IdComment" />
@@ -41,24 +67,32 @@
                             <!-- Display Comment -->
                             <p>
                                 <strong>
-                                    <a asp-action="Details" asp-controller="User" asp-route-id="@comment.IdAuthor" style="text-decoration: none; color: inherit;">@comment.AuthorName </a>
+                                    <a asp-action="Details" asp-controller="User" asp-route-id="@comment.IdAuthor" style="text-decoration: none; color: inherit;">@comment.AuthorName</a>
                                 </strong>
                                 <small class="text-muted">on @comment.CreatedDate.ToString("MMMM dd, yyyy hh:mm tt")</small>
                             </p>
                             <p>@comment.Content</p>
                         }
                     </div>
-                    <div class="comment-actions">
-                        @if (ViewData["EditingCommentId"] == null || (Guid)ViewData["EditingCommentId"] != comment.IdComment)
-                        {
-                            <a asp-action="EditComment" asp-controller="Comment" asp-route-id="@comment.IdComment" class="btn btn-link p-0 me-2">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                        }
-                        <a asp-action="DeleteComment" asp-controller="Comment" method="post" asp-route-id="@comment.IdComment" class="btn btn-link p-0 text-danger" onclick="return confirm('Are you sure you want to delete this comment?');">
-                            <i class="fas fa-trash-alt"></i>
-                        </a>
-                    </div>
+
+                    <!-- Show Edit & Delete Buttons Only for the Comment Author -->
+                    @if (isCommentAuthor)
+                    {
+                        <div class="comment-actions">
+                            @if (ViewData["EditingCommentId"] == null || (Guid)ViewData["EditingCommentId"] != comment.IdComment)
+                            {
+                                <a asp-action="EditComment" asp-controller="Comment" asp-route-id="@comment.IdComment" class="btn btn-link p-0 me-2">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            }
+                            <form asp-action="DeleteComment" asp-controller="Comment" method="post" onsubmit="return confirm('Are you sure you want to delete this comment?');">
+                                <input type="hidden" name="IdComment" value="@comment.IdComment" />
+                                <button type="submit" class="btn btn-link p-0 text-danger">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
                 </div>
             </li>
         }

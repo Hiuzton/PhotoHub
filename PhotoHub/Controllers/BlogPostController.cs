@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PhotoHub.Models;
+using PhotoHub.Models.DBObjects;
 using PhotoHub.Services.Interfaces;
 using PhotoHub.ViewModels;
+using System.Drawing.Printing;
 using X.PagedList.Extensions;
 
 namespace PhotoHub.Controllers
@@ -40,7 +43,7 @@ namespace PhotoHub.Controllers
                     Content = bp.Content,
                     CreatedDate = bp.CreatedDate,
                     ImageUrl = images.FirstOrDefault(img => img.IdBlogPost == bp.IdBlogPost)?.Url,
-                    AuthorName = await _userService.GetUserNameById(bp.AuthorId)
+                    AuthorName = await _userService.GetUserNameById(bp.IdAuthor)
                 };
                 blogPostViewModels.Add(viewModel);
             }
@@ -62,8 +65,8 @@ namespace PhotoHub.Controllers
             {
                 IdComment = c.IdComment,
                 Content = c.Content,
-                IdAuthor = c.IdUser,
-                AuthorName = _userService.GetUserNameById(c.IdUser).Result,
+                IdAuthor = c.IdAuthor,
+                AuthorName = _userService.GetUserNameById(c.IdAuthor).Result,
                 CreatedDate = c.CreatedDate
             }).ToList();
 
@@ -73,8 +76,8 @@ namespace PhotoHub.Controllers
                 Title = blogPost.Title,
                 Content = blogPost.Content,
                 ImageUrl = (await _imageService.GetImageByBlogPostId(blogPost.IdBlogPost))?.Url,
-                IdAuthor = blogPost.AuthorId,
-                AuthorName = await _userService.GetUserNameById(blogPost.AuthorId),
+                IdAuthor = blogPost.IdAuthor,
+                AuthorName = await _userService.GetUserNameById(blogPost.IdAuthor),
                 CreatedDate = blogPost.CreatedDate,
                 Comments = commentViewModels
             };
@@ -130,7 +133,7 @@ namespace PhotoHub.Controllers
                 blogPost.Title = blogPostVM.Title;
                 blogPost.Content = blogPostVM.Content;
                 blogPost.CreatedDate = blogPostVM.CreatedDate;
-                blogPost.AuthorId = Guid.Parse(User.FindFirst("UserGuid")?.Value);
+                blogPost.IdAuthor = Guid.Parse(User.FindFirst("UserGuid")?.Value);
                 
 
                 if(blogPost != null) 
@@ -151,6 +154,60 @@ namespace PhotoHub.Controllers
             {
                 return View();
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditPost(Guid id)
+        {
+            var blogPost = await _blogPostService.GetBlogPostById(id);
+
+            var viewModel = new BlogPostDetailsViewModel
+            {
+                IdBlogPost = blogPost.IdBlogPost,
+                Title = blogPost.Title,
+                Content = blogPost.Content,
+                IdAuthor = blogPost.IdAuthor,
+                ImageUrl = (await _imageService.GetImageByBlogPostId(blogPost.IdBlogPost))?.Url,
+                AuthorName = await _userService.GetUserNameById(blogPost.IdAuthor),
+            };
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditPost(BlogPostModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var blogPostModel = new BlogPostModel
+                {
+                    IdBlogPost = model.IdBlogPost,
+                    IdAuthor = model.IdAuthor,
+                    Title = model.Title,
+                    Content = model.Content,
+                    CreatedDate = DateTime.Now,
+                };
+
+                await _blogPostService.UpdateBlogPost(blogPostModel);
+            }
+            return RedirectToAction("Details", "BlogPost", new { id = model.IdBlogPost} );
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeletePost(Guid id)
+        {
+
+            var post = await _blogPostService.GetBlogPostById(id);
+            if (post == null) return NotFound();
+
+            var authorizeUserId = Guid.Parse(User.FindFirst("UserGuid")?.Value);
+            if (post.IdAuthor != authorizeUserId)
+            {
+                return Forbid();
+            }
+
+            await _blogPostService.DeleteBlogPost(id);
+            return RedirectToAction("Index", new {page = 1, pageSize = 5});
         }
     }
 }

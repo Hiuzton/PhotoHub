@@ -40,7 +40,7 @@ namespace PhotoHub.Controllers
                 {
                     IdComment = Guid.NewGuid(),
                     IdBlogPost = model.IdBlogPost,
-                    IdUser = Guid.Parse(userId),
+                    IdAuthor = Guid.Parse(userId),
                     Content = model.Content,
                     CreatedDate = DateTime.UtcNow
                 };
@@ -59,11 +59,13 @@ namespace PhotoHub.Controllers
             TempData["EditingCommentId"] = id;
 
             var comment = await _commentService.GetCommentById(id);
-            if (comment == null)
-            {
-                return NotFound();
-            }
+            if (comment == null) return NotFound();
 
+            var currentUserId = Guid.Parse(User.FindFirst("UserGuid")?.Value);
+            if (comment.IdAuthor != currentUserId)
+            {
+                return Forbid();
+            }
             return RedirectToAction("Details", "BlogPost", new { id = comment.IdBlogPost });
         }
 
@@ -99,8 +101,13 @@ namespace PhotoHub.Controllers
                 return NotFound();
             }
 
-            await _commentService.DeleteComment(id);
+            var currentUserId = Guid.Parse(User.FindFirst("UserGuid")?.Value);
+            if (comment.IdAuthor != currentUserId)
+            {
+                return Forbid();
+            }
 
+            await _commentService.DeleteComment(id);
             return RedirectToAction("Details", "BlogPost", new { id = comment.IdBlogPost });
         }
     }

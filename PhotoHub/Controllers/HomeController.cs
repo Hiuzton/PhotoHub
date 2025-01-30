@@ -37,7 +37,7 @@ namespace PhotoHub.Controllers
                     Content = bp.Content.Length > 150 ? bp.Content.Substring(0, 150) + "..." : bp.Content,
                     CreatedDate = bp.CreatedDate,
                     ImageUrl = images.FirstOrDefault(img => img.IdBlogPost == bp.IdBlogPost)?.Url,
-                    AuthorName = await _userService.GetUserNameById(bp.AuthorId)
+                    AuthorName = await _userService.GetUserNameById(bp.IdAuthor)
                 };
                 blogPostViewModels.Add(blogPostViewModel);
             }
