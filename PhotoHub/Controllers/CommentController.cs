@@ -69,8 +69,6 @@ namespace PhotoHub.Controllers
             return RedirectToAction("Details", "BlogPost", new { id = comment.IdBlogPost });
         }
 
-
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditComment(EditCommentViewModel model)
@@ -92,7 +90,6 @@ namespace PhotoHub.Controllers
             return RedirectToAction("Details", "BlogPost", new { id = model.IdBlogPost });
         }
 
-        [HttpPost]
         public async Task<IActionResult> DeleteComment(Guid id)
         {
             var comment = await _commentService.GetCommentById(id);
